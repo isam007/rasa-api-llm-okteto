@@ -1,0 +1,33 @@
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.10
+
+RUN apt-get update \
+      && apt-get --assume-yes --no-install-recommends install\
+      build-essential \
+      curl \
+      git \
+      jq \
+      libgomp1 \
+      vim 
+
+# Set the working directory
+WORKDIR /app
+
+# Upgrade pip version
+RUN pip install --no-cache-dir --upgrade pip
+
+EXPOSE 8088
+
+ADD requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
+# Start FastAPI
+CMD ["uvicorn", "restservice_app:app", "--host", "0.0.0.0", "--port", "8088"]
+
+ADD embeddings_matrix_v1_similarities_top_k.npy embeddings_matrix_v1_similarities_top_k.npy
+ADD embeddings_matrix_v1.npy embeddings_matrix_v1.npy
+ADD restservice_app.py restservice_app.py
+ADD dataset.csv dataset.csv
+
+
+
+

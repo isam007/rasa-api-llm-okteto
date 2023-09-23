@@ -1,0 +1,61 @@
+version: '3.6.8'
+services:
+  rasa:
+    image: rasa/rasa:latest-full
+    ports:
+      - "5006:5006"
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./actions:/app/actions
+      - ./:/app
+    command:
+      - run
+      - -m
+      - models
+      - --enable-api
+      - --cors
+      - "*"
+      - --debug
+      - -p 5006
+    working_dir: /app
+    networks:
+      - all
+
+  action-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.actions
+    ports:
+      - "5055:5055"
+    restart: unless-stopped
+    volumes:
+      - ./actions:/app/actions
+    working_dir: /app
+    command: ["rasa", "run", "actions"]      
+    networks:
+      - all
+    
+  chatbot:
+    image: nginx:latest
+    volumes:
+      - ./chatbot:/usr/share/nginx/html
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    networks:
+      - all
+
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    ports:
+      - "8088:8088"
+    restart: unless-stopped
+    working_dir: /app
+    
+networks:
+  all:
+    driver: bridge
