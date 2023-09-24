@@ -20,8 +20,7 @@ services:
       - --debug
       - -p 5006
     working_dir: /app
-    networks:
-      - all
+
 
   action-server:
     build:
@@ -34,8 +33,7 @@ services:
       - ./actions:/app/actions
     working_dir: /app
     command: ["rasa", "run", "actions"]      
-    networks:
-      - all
+
     
   chatbot:
     image: nginx:latest
@@ -44,18 +42,18 @@ services:
     restart: unless-stopped
     ports:
       - "8080:80"
-    networks:
-      - all
+
 
   fastapi:
+    public: true
     build:
       context: .
       dockerfile: Dockerfile.fastapi
     ports:
-      - "8088:8088"
-    restart: unless-stopped
+      - "443:443"
+    restart: always
     working_dir: /app
-    
-networks:
-  all:
-    driver: bridge
+
+
+
+

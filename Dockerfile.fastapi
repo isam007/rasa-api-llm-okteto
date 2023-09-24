@@ -15,13 +15,17 @@ WORKDIR /app
 # Upgrade pip version
 RUN pip install --no-cache-dir --upgrade pip
 
-EXPOSE 8088
+EXPOSE 443
 
 ADD requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
+
+
 # Start FastAPI
-CMD ["uvicorn", "restservice_app:app", "--host", "0.0.0.0", "--port", "8088"]
+CMD ["uvicorn", "restservice_app:app", "--host", "0.0.0.0", "--port", "443"]
+
+
 
 ADD embeddings_matrix_v1_similarities_top_k.npy embeddings_matrix_v1_similarities_top_k.npy
 ADD embeddings_matrix_v1.npy embeddings_matrix_v1.npy

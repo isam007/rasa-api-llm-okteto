@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict
 import pandas as pd
 import numpy as np
@@ -7,7 +8,17 @@ from sklearn.metrics.pairwise import cosine_similarity
 import json
 import re
 
+
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 
 @app.get("/api/v1/health", summary="Health check", description="Check if the API is up.")
@@ -30,7 +41,7 @@ def get_top(searchQuery, k=1):
     for id_ in top_k_ids:
         row = df.iloc[id_]
 
-        responses = "\n".join([row['Content'], row['Source'], row['Title']])
+        responses = " ".join([row['Content'], row['Source']])
 
     return responses
 
